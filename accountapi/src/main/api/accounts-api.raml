@@ -1,0 +1,144 @@
+#%RAML 1.0
+baseUri: https://anypoint.mulesoft.com/mocking/api/v1/links/73730032-5025-4cd7-8f26-e65d72b38108/ # 
+title: Accounts API
+
+traits: 
+    Requester-ID:
+      headers:
+        RequesterID:
+          description: id of the person requesting the accounts information
+          type: integer
+  
+types: 
+  ACCOUNTSTYPES: !include AccountsAPI-DataType.raml
+
+/accounts:
+  is: Requester-ID
+  get:
+    description: Retrieves accounts based on the given query parameters.
+    queryParameters:
+      Type: 
+        type: string
+        enum: ["Personal", "Business"]
+      name:
+        description: The system will look for names that contain the given value in the name parameter.
+        type: string
+        required: false
+      country:
+        type: string
+        required: false
+    responses: 
+      200:
+        description: Returns an array of Account objects in JSON
+        body: 
+          application/json:
+            type: ACCOUNTSTYPES[]
+            examples:
+              output: !include AccountsAPIExample.raml
+      400:
+        body: 
+          application/json:
+            example: {
+              "message": "Error retrieving data from the Account database."
+            }
+  post:
+    description: Creates new accounts based on a given array of Account objects.
+    body:
+      application/json:
+        type: ACCOUNTSTYPES[]
+        examples: 
+         input: !include AccountsAPIExampleNoID.raml
+    responses: 
+      201:
+        body: 
+          application/json:
+            example: {
+              "message": "Accounts uploaded (but not really)."
+            }
+      400:
+        body: 
+          application/json:
+            example: {
+               "message": "Error creating accounts. Please check the JSON object and make sure it's valid."
+             }
+  /{id}:
+    get:
+      description: Retrieves account based on the given query parameters.
+      queryParameters:
+        Type: 
+          type: string
+          required: false
+          enum: ["Personal", "Business"]
+        name:
+          description: The system will look for names that contain the given value in the name parameter.
+          type: string
+          required: false
+        country:
+          type: string
+          required: false
+      responses: 
+        200:
+          description: Returns an Account objects in JSON
+          body: 
+            application/json:
+              type: ACCOUNTSTYPES
+              examples:
+                output: !include AccountAPIExample.raml
+        400:
+          body: 
+            application/json:
+              example: {
+                "message": "Error retrieving data from the Account database."
+              }
+  put:
+    description: replace an account based on a given Account objects.
+    body:
+      application/json:
+        type: ACCOUNTSTYPES
+        examples: 
+         input: !include AccountAPIExample.raml
+    responses: 
+      201:
+        body: 
+          application/json:
+            example: {"message": "account replaced (but not really)"}
+      400:
+        body: 
+          application/json:
+            example: {
+               "message": "Error replacing account. Please check the JSON object and make sure it's valid."
+             } 
+  patch:
+    description: modify an account based on a given Account objects.
+    body:
+      application/json:
+        type: ACCOUNTSTYPES
+        examples: 
+         input: !include AccountAPIExample.raml
+    responses: 
+      201:
+        body: 
+          application/json:
+            example: {"message": "account modified (but not really)"}
+      400:
+        body: 
+          application/json:
+            example: {
+               "message": "Error modifying account. Please check the JSON object and make sure it's valid."
+             } 
+  delete:
+    description: delete an account based on a given Account objects.
+    responses: 
+      201:
+        body: 
+          application/json:
+            example: {"message": "account deleted (but not really)"}
+      400:
+        body: 
+          application/json:
+            example: {
+               "message": "Error deleteing account. Please check the JSON object and make sure it's valid."
+             } 
+
+
+
